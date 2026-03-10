@@ -18,27 +18,24 @@ class OcrService {
         height: page.height.toInt(),
       );
 
-      // Este objeto es un dart:ui Image válido
+      // Convierte a ui.Image
       final ui.Image uiImage =
           await pageImage!.createImageIfNotAvailable();
 
-      // Convertimos a bytes PNG
-      final byteData =
-          await uiImage.toByteData(format: ui.ImageByteFormat.png);
+      // Convierte ui.Image a PNG bytes
+      final byteData = await uiImage.toByteData(
+          format: ui.ImageByteFormat.png);
       final pngBytes = byteData!.buffer.asUint8List();
 
+      // Guarda PNG temporal
       final tempDir = await getTemporaryDirectory();
       final tempFile = File('${tempDir.path}/page_$i.png');
       await tempFile.writeAsBytes(pngBytes);
 
-      final pageText =
-          await TesseractOcr.extractText(tempFile.path);
+      // Extrae texto OCR
+      final pageText = await TesseractOcr.extractText(tempFile.path);
       allText += pageText + '\n';
     }
-
-    // Este método no existe en la API actual:
-    // pdfDocument.close();
-    // page.dispose();
 
     return allText;
   }
