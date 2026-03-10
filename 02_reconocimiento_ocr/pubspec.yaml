@@ -15,6 +15,10 @@ dependencies:
   tesseract_ocr: ^0.5.0
   flutter_spinkit: ^5.2.2
   path_provider: ^2.1.5
+  pdfx: ^2.9.2
+  google_mlkit_text_recognition: ^0.15.1
+  image: ^4.8.0
+  syncfusion_flutter_pdf: ^32.2.9
 
 dev_dependencies:
   flutter_test:

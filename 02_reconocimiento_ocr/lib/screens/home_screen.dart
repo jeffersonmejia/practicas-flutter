@@ -4,6 +4,7 @@ import '../utils/ocr_service.dart';
 import 'result_screen.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/loader.dart';
+import 'dart:io';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,17 +25,29 @@ class _HomeScreenState extends State<HomeScreen> {
     if (result != null && result.files.single.path != null) {
       setState(() => isProcessing = true);
 
-      final text = await OcrService.extractText(result.files.single.path!);
+      try {
+        // Extrae texto e imágenes del PDF
+        final data = await OcrService.extractTextAndImages(result.files.single.path!);
 
-      if (!mounted) return; // evita usar BuildContext si se desmontó el widget
-      setState(() => isProcessing = false);
+        if (!mounted) return;
+        setState(() => isProcessing = false);
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ResultScreen(extractedText: text),
-        ),
-      );
+        // Navega a la pantalla de resultados
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ResultScreen(
+              extractedText: data['text'],
+              extractedImages: data['images'], // Lista<File> de imágenes
+            ),
+          ),
+        );
+      } catch (e) {
+        setState(() => isProcessing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al procesar el PDF: $e')),
+        );
+      }
     }
   }
 

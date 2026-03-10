@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Inicializa canales nativos
   runApp(const MyApp());
 }
 
