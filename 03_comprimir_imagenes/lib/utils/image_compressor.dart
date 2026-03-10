@@ -1,14 +1,21 @@
 import 'dart:io';
-import 'package:image/image.dart' as img;
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
-Future<File> compressImage(File file, {int quality = 70}) async {
-  final bytes = await file.readAsBytes();
-  final image = img.decodeImage(bytes);
-  if (image == null) throw Exception('No se pudo decodificar la imagen');
+Future<File> compressImage(File file, {int quality = 70, int? minWidth, int? minHeight}) async {
+  final dir = await getTemporaryDirectory();
+  final targetPath = path.join(dir.path, 'compressed_${path.basename(file.path)}');
 
-  final compressed = img.encodeJpg(image, quality: quality);
+  final result = await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path,
+    targetPath,
+    quality: quality,
+    minWidth: minWidth ?? 800,
+    minHeight: minHeight ?? 600,
+    format: CompressFormat.jpeg,
+  );
 
-  final compressedFile = File('${file.parent.path}/compressed_${file.uri.pathSegments.last}');
-  await compressedFile.writeAsBytes(compressed);
-  return compressedFile;
+  if (result == null) throw Exception('No se pudo comprimir la imagen');
+  return result;
 }
