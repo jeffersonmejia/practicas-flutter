@@ -58,7 +58,7 @@ class ResultScreen extends StatelessWidget {
             const SizedBox(height: 24),
             if (extractedImages != null && extractedImages!.isNotEmpty) ...[
               Text(
-                'Imágenes',
+                'PDF original',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
