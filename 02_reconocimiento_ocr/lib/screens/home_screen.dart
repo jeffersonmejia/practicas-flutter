@@ -25,8 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (result != null && result.files.single.path != null) {
       setState(() => isProcessing = true);
 
-      final file = File(result.files.single.path!);
-      final text = await OcrService().extractTextFromPdf(file);
+      final text = await OcrService.extractText(result.files.single.path!);
 
       if (!mounted) return; // evita usar BuildContext si se desmontó el widget
       setState(() => isProcessing = false);
