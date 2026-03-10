@@ -1,32 +1,45 @@
 import 'dart:io';
-import 'package:tesseract_ocr/tesseract_ocr.dart';
-import 'package:pdf_render/pdf_render.dart';
+import 'dart:ui' as ui;
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf_render/pdf_render.dart';
+import 'package:tesseract_ocr/tesseract_ocr.dart';
 
 class OcrService {
   static Future<String> extractText(String filePath) async {
-    final file = File(filePath);
-    final document = await PdfDocument.openFile(file.path);
-    final pageCount = document.pageCount;
-    String extractedText = '';
+    final pdfDocument = await PdfDocument.openFile(filePath);
+    final pageCount = pdfDocument.pageCount;
+    String allText = '';
 
     for (int i = 1; i <= pageCount; i++) {
-      final page = await document.getPage(i);
+      final page = await pdfDocument.getPage(i);
 
-      // Renderiza la página a bytes
-      final pageBytes = await page.render(
+      final pageImage = await page.render(
         width: page.width.toInt(),
         height: page.height.toInt(),
-      ).then((image) => image!.bytes);
+      );
+
+      // Este objeto es un dart:ui Image válido
+      final ui.Image uiImage =
+          await pageImage!.createImageIfNotAvailable();
+
+      // Convertimos a bytes PNG
+      final byteData =
+          await uiImage.toByteData(format: ui.ImageByteFormat.png);
+      final pngBytes = byteData!.buffer.asUint8List();
 
       final tempDir = await getTemporaryDirectory();
       final tempFile = File('${tempDir.path}/page_$i.png');
-      await tempFile.writeAsBytes(pageBytes);
+      await tempFile.writeAsBytes(pngBytes);
 
-      final text = await TesseractOcr.extractText(tempFile.path);
-      extractedText += text + '\n';
+      final pageText =
+          await TesseractOcr.extractText(tempFile.path);
+      allText += pageText + '\n';
     }
 
-    return extractedText;
+    // Este método no existe en la API actual:
+    // pdfDocument.close();
+    // page.dispose();
+
+    return allText;
   }
 }
