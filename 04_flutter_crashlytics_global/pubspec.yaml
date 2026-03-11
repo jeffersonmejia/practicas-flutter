@@ -1,0 +1,23 @@
+name: flutter_crashlytics_global
+description: Flutter global error capture example
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  firebase_core: ^4.5.0
+  firebase_crashlytics: ^5.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
