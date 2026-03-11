@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 Future<File> compressImage(File file,
-    {int quality = 70, int? minWidth, int? minHeight}) async {
+    {int quality = 40, int? minWidth, int? minHeight}) async {
 
   final dir = await getTemporaryDirectory();
   final targetPath =
