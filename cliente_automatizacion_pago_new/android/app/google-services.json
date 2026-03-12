@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "619984623277",
+    "project_id": "pagos-automatizados-8af9b",
+    "storage_bucket": "pagos-automatizados-8af9b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619984623277:android:a43f4f95d43dc9db9c1824",
+        "android_client_info": {
+          "package_name": "com.example.cliente_automatizacion_pago"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBIJPD_ez0l4JsIr0rSSoxJftmDDyoqAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
