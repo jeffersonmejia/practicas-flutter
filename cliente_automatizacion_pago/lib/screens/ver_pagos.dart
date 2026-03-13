@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase/supabase.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'home.dart';
@@ -12,6 +13,7 @@ class Payment {
   final double monto;
   final String comprobante;
   final String fecha;
+  final String origen;
 
   Payment({
     required this.id,
@@ -21,6 +23,7 @@ class Payment {
     required this.monto,
     required this.comprobante,
     required this.fecha,
+    required this.origen,
   });
 }
 
@@ -36,11 +39,18 @@ class _VerPagosPageState extends State<VerPagosPage> {
   bool cargando = true;
   fb_auth.User? user;
 
+  // Instancia independiente de SupabaseClient para la API "apiDeuna"
+  final SupabaseClient deunaClient = SupabaseClient(
+    'https://tdcogdgrpyqhznlmyhnf.supabase.co',
+    'sb_publishable_RbZ6EgwHAZH39ISfsekCEA_wtsj1p1v',
+  );
+
   @override
   void initState() {
     super.initState();
     user = fb_auth.FirebaseAuth.instance.currentUser;
     cargar();
+    cargarDeuna();
   }
 
   Future<void> cerrarSesion() async {
@@ -62,21 +72,17 @@ class _VerPagosPageState extends State<VerPagosPage> {
           .select('id, created_at, ordenante, beneficiario, monto, comprobante, fecha')
           .order('id', ascending: false) as List<dynamic>? ?? [];
 
-      print("Datos recibidos de Supabase:");
-      print(data);
-
       setState(() {
-        pagos = data.map((p) {
-          return Payment(
-            id: int.tryParse(p['id']?.toString() ?? '0') ?? 0,
-            createdAt: p['created_at']?.toString() ?? '',
-            ordenante: p['ordenante']?.toString() ?? '',
-            beneficiario: p['beneficiario']?.toString() ?? '',
-            monto: (p['monto'] != null) ? double.tryParse(p['monto'].toString()) ?? 0 : 0,
-            comprobante: p['comprobante']?.toString() ?? '',
-            fecha: p['fecha']?.toString() ?? '',
-          );
-        }).toList();
+        pagos = data.map((p) => Payment(
+          id: int.tryParse(p['id']?.toString() ?? '0') ?? 0,
+          createdAt: p['created_at']?.toString() ?? '',
+          ordenante: p['ordenante']?.toString() ?? '',
+          beneficiario: p['beneficiario']?.toString() ?? '',
+          monto: (p['monto'] != null) ? double.tryParse(p['monto'].toString()) ?? 0 : 0,
+          comprobante: p['comprobante']?.toString() ?? '',
+          fecha: p['fecha']?.toString() ?? '',
+          origen: 'Banco Pichincha',
+        )).toList();
         cargando = false;
       });
     } catch (e) {
@@ -87,11 +93,52 @@ class _VerPagosPageState extends State<VerPagosPage> {
     }
   }
 
+  Future<void> cargarDeuna() async {
+    try {
+      final data = await deunaClient
+          .from('pagos_deuna')
+          .select('id, created_at, ordenante, beneficiario, monto, comprobante, fecha')
+          .order('id', ascending: false) as List<dynamic>? ?? [];
+
+      setState(() {
+        pagos.addAll(data.map((p) => Payment(
+          id: int.tryParse(p['id']?.toString() ?? '0') ?? 0,
+          createdAt: p['created_at']?.toString() ?? '',
+          ordenante: p['ordenante']?.toString() ?? '',
+          beneficiario: p['beneficiario']?.toString() ?? '',
+          monto: (p['monto'] != null) ? double.tryParse(p['monto'].toString()) ?? 0 : 0,
+          comprobante: p['comprobante']?.toString() ?? '',
+          fecha: p['fecha']?.toString() ?? '',
+          origen: 'Deuna',
+        )).toList());
+      });
+    } catch (e) {
+      print("Excepción al cargar pagos de Deuna: $e");
+    }
+  }
+
+  Widget tagPago(String origen) {
+    Color bg;
+    Color text;
+    if (origen == 'Deuna') {
+      bg = const Color(0xFFE1BEE7);
+      text = const Color(0xFF4A148C);
+    } else {
+      bg = const Color(0xFFFFF9C4);
+      text = const Color(0xFF827717);
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12)),
+      child: Text(origen, style: TextStyle(color: text, fontWeight: FontWeight.w600, fontSize: 12)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final Color botonActualizarFondo = const Color(0xFFBBDEFB); // azul suave
-    final Color botonActualizarTexto = const Color(0xFF0D1B2A); // azul tirando a negro
-    final Color botonCerrarTexto = Colors.grey[700]!; // gris suave
+    final Color botonActualizarFondo = const Color(0xFFBBDEFB);
+    final Color botonActualizarTexto = const Color(0xFF0D1B2A);
+    final Color botonCerrarTexto = Colors.grey[700]!;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -109,7 +156,6 @@ class _VerPagosPageState extends State<VerPagosPage> {
               color: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircleAvatar(
                     radius: 50,
@@ -134,7 +180,10 @@ class _VerPagosPageState extends State<VerPagosPage> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: cargar,
+                          onPressed: () {
+                            cargar();
+                            cargarDeuna();
+                          },
                           icon: const Icon(Icons.refresh, size: 20),
                           label: const Text("Actualizar"),
                           style: ElevatedButton.styleFrom(
@@ -147,7 +196,7 @@ class _VerPagosPageState extends State<VerPagosPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12), // gap uniforme
+                      const SizedBox(width: 12),
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: cerrarSesion,
@@ -217,8 +266,7 @@ class _VerPagosPageState extends State<VerPagosPage> {
                                       Expanded(
                                         child: Text(
                                           pago.ordenante,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w600, fontSize: 16),
+                                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                                         ),
                                       ),
                                       Text(
@@ -232,14 +280,26 @@ class _VerPagosPageState extends State<VerPagosPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 8),
-                                  Text("Beneficiario: ${pago.beneficiario}",
-                                      style: TextStyle(color: Colors.grey[700])),
+                                  Text(
+                                    "Beneficiario: ${pago.beneficiario}",
+                                    style: TextStyle(color: Colors.grey[700]),
+                                  ),
                                   const SizedBox(height: 4),
-                                  Text("Comprobante: ${pago.comprobante}",
-                                      style: TextStyle(color: Colors.grey[700])),
+                                  Text(
+                                    "Comprobante: ${pago.comprobante}",
+                                    style: TextStyle(color: Colors.grey[700]),
+                                  ),
                                   const SizedBox(height: 4),
-                                  Text("Fecha: ${pago.fecha}",
-                                      style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Fecha: ${pago.fecha}",
+                                        style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                                      ),
+                                      tagPago(pago.origen),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
