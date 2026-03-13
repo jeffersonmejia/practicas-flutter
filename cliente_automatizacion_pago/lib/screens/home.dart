@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'ver_pagos.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,55 +15,28 @@ class _HomePageState extends State<HomePage> {
   Future<void> loginGoogle() async {
     try {
 
-      print("BOTON PRESIONADO");
-
       final GoogleSignInAccount? googleUser =
           await GoogleSignIn().signIn();
 
-      print("Usuario Google: $googleUser");
-
-      if (googleUser == null) {
-        print("LOGIN CANCELADO POR EL USUARIO");
-        return;
-      }
+      if (googleUser == null) return;
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-
-      print("ACCESS TOKEN: ${googleAuth.accessToken}");
-      print("ID TOKEN: ${googleAuth.idToken}");
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-      print("LOGIN FIREBASE OK");
-      print("USER: ${userCredential.user?.email}");
-
-      setState(() {});
-
-    } catch (e, stack) {
-
-      print("ERROR GOOGLE LOGIN: $e");
-      print(stack);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Error iniciando sesión con Google"),
-        ),
-      );
+    } catch (e) {
+      print(e);
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-
+  Widget pantallaLogin(BuildContext context) {
     final theme = Theme.of(context);
-    final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -97,27 +71,35 @@ class _HomePageState extends State<HomePage> {
               ElevatedButton.icon(
                 icon: const Icon(Icons.login),
                 label: const Text("Iniciar sesión con Google"),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 14,
-                  ),
-                ),
                 onPressed: loginGoogle,
               ),
-
-              const SizedBox(height: 20),
-
-              if (user != null)
-                Text(
-                  "Sesión activa: ${user.email}",
-                  textAlign: TextAlign.center,
-                ),
 
             ],
           ),
         ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
+          return const VerPagosPage();
+        }
+
+        return pantallaLogin(context);
+      },
     );
   }
 }

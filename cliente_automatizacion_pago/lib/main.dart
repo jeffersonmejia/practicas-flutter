@@ -21,8 +21,8 @@ void main() async {
   // Inicializar Supabase
   try {
     await Supabase.initialize(
-      url: 'https://omayafmdkvhyvjuftqbx.supabase.co',
-      anonKey: 'sb_publishable_O-vdSpkaV6xiKC9l06GYNw_-i0dbA2P',
+      url: 'https://tdcogdgrpyqhznlmyhnf.supabase.co',
+      anonKey: 'sb_publishable_RbZ6EgwHAZH39ISfsekCEA_wtsj1p1v',
     );
     print("Supabase initialized successfully");
   } catch (e) {
