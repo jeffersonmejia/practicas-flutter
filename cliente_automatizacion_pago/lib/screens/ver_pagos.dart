@@ -89,9 +89,9 @@ class _VerPagosPageState extends State<VerPagosPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Color botonTextoRojo = const Color.fromARGB(255, 110, 23, 23);
     final Color botonActualizarFondo = const Color(0xFFBBDEFB); // azul suave
     final Color botonActualizarTexto = const Color(0xFF0D1B2A); // azul tirando a negro
+    final Color botonCerrarTexto = Colors.grey[700]!; // gris suave
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -107,7 +107,7 @@ class _VerPagosPageState extends State<VerPagosPage> {
             Container(
               width: double.infinity,
               color: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 32),
+              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -130,49 +130,51 @@ class _VerPagosPageState extends State<VerPagosPage> {
                     style: TextStyle(color: Colors.grey[700], fontSize: 17),
                   ),
                   const SizedBox(height: 16),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 0, maxWidth: 180),
-                    child: ElevatedButton.icon(
-                      onPressed: cerrarSesion,
-                      icon: Icon(Icons.logout_outlined, size: 18, color: botonTextoRojo),
-                      label: Text(
-                        "Cerrar sesión",
-                        style: TextStyle(color: botonTextoRojo),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF9A9A),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 3, // Mantengo actualizar amplio
+                        child: ElevatedButton.icon(
+                          onPressed: cargar,
+                          icon: const Icon(Icons.refresh, size: 20),
+                          label: const Text("Actualizar"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: botonActualizarFondo,
+                            foregroundColor: botonActualizarTexto,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                            elevation: 0,
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                        elevation: 0,
                       ),
-                    ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 2, // Mayor espacio horizontal para cerrar sesión
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                          child: OutlinedButton.icon(
+                            onPressed: cerrarSesion,
+                            icon: Icon(Icons.logout_outlined, size: 18, color: botonCerrarTexto),
+                            label: Text(
+                              "Cerrar sesión",
+                              style: TextStyle(color: botonCerrarTexto, fontWeight: FontWeight.w600),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              side: BorderSide(color: Colors.grey.withOpacity(0.2)), // borde muy sutil
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              elevation: 0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          // Botón de actualizar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: cargar,
-                icon: const Icon(Icons.refresh, size: 20),
-                label: const Text("Actualizar"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: botonActualizarFondo,
-                  foregroundColor: botonActualizarTexto,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                  elevation: 0,
-                ),
-              ),
-            ),
-          ),
           Expanded(
             child: cargando
                 ? const Center(child: CircularProgressIndicator())
