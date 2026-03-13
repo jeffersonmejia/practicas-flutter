@@ -18,7 +18,7 @@ void main() async {
     print("Firebase failed to initialize: $e");
   }
 
-  // Inicializar Supabase
+  // Inicializar Supabase principal
   try {
     await Supabase.initialize(
       url: 'https://tdcogdgrpyqhznlmyhnf.supabase.co',
@@ -27,6 +27,18 @@ void main() async {
     print("Supabase initialized successfully");
   } catch (e) {
     print("Supabase failed to initialize: $e");
+  }
+
+  // Inicializar nueva instancia de Supabase llamada apiDeuna
+  try {
+    await Supabase.initialize(
+      url: 'https://tdcogdgrpyqhznlmyhnf.supabase.co',
+      anonKey: 'sb_publishable_RbZ6EgwHAZH39ISfsekCEA_wtsj1p1v',
+      name: 'apiDeuna', // Nombre único para usarla por separado
+    );
+    print("Supabase apiDeuna initialized successfully");
+  } catch (e) {
+    print("Supabase apiDeuna failed to initialize: $e");
   }
 
   runApp(const MyApp());
