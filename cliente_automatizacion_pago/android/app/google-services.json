@@ -12,7 +12,20 @@
           "package_name": "com.example.cliente_automatizacion_pago"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "619984623277-n0nn7ln35h8b90phs4gm7mcs55q8rs3p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cliente_automatizacion_pago",
+            "certificate_hash": "439be02e7813020c120194b11a4acdf7cf23a8a7"
+          }
+        },
+        {
+          "client_id": "619984623277-d3uimh4d15j4767d7b5rfedenml2vfde.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCBIJPD_ez0l4JsIr0rSSoxJftmDDyoqAo"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619984623277-d3uimh4d15j4767d7b5rfedenml2vfde.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "619984623277-01sm72tfgi64bn82qgdkbtvpu4oefduv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.clienteAutomatizacionPago"
+              }
+            }
+          ]
         }
       }
     }
