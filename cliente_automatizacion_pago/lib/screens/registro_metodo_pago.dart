@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/metodo_pago_model.dart';
-import '../services/pago_service.dart';
+import '../services/metodo_pago_service.dart';
 
 class RegistroPagoPage extends StatefulWidget {
   const RegistroPagoPage({super.key});
@@ -10,24 +10,22 @@ class RegistroPagoPage extends StatefulWidget {
 }
 
 class _RegistroPagoPageState extends State<RegistroPagoPage> {
-  final cuentaController = TextEditingController();
-  final nombreController = TextEditingController();
-  final apellidoController = TextEditingController();
-  final cedulaController = TextEditingController();
 
+  final cuentaController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
   String? bancoSeleccionado;
 
   final List<String> bancos = [
     "Banco Pichincha",
-    "DeUna",
-    "Banco Guayaquil"
+    "DeUna"
   ];
 
-  final pagoService = PagoService();
+  final metodoPagoService = MetodoPagoService();
 
   @override
   Widget build(BuildContext context) {
+
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -40,12 +38,15 @@ class _RegistroPagoPageState extends State<RegistroPagoPage> {
           key: formKey,
           child: ListView(
             children: [
+
               Icon(
                 Icons.account_balance_wallet,
                 size: 60,
                 color: theme.colorScheme.primary,
               ),
+
               const SizedBox(height: 30),
+
               DropdownButtonFormField<String>(
                 value: bancoSeleccionado,
                 decoration: const InputDecoration(
@@ -63,95 +64,18 @@ class _RegistroPagoPageState extends State<RegistroPagoPage> {
                     bancoSeleccionado = value;
                   });
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Seleccione un banco";
-                  }
-                  return null;
-                },
               ),
+
               const SizedBox(height: 20),
+
               TextFormField(
                 controller: cuentaController,
                 decoration: const InputDecoration(
                   labelText: "Número de cuenta",
                   prefixIcon: Icon(Icons.credit_card),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Ingrese número de cuenta";
-                  }
-                  return null;
-                },
               ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: nombreController,
-                decoration: const InputDecoration(
-                  labelText: "Nombre",
-                  prefixIcon: Icon(Icons.person_outline),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Ingrese nombre";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: apellidoController,
-                decoration: const InputDecoration(
-                  labelText: "Apellido",
-                  prefixIcon: Icon(Icons.person),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Ingrese apellido";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: cedulaController,
-                decoration: const InputDecoration(
-                  labelText: "Cédula",
-                  prefixIcon: Icon(Icons.badge),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Ingrese cédula";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.save),
-                label: const Text("Guardar"),
-                onPressed: () async {
-                  if (formKey.currentState!.validate() && bancoSeleccionado != null) {
-                    final metodo = PaymentMethod(
-                      bank: bancoSeleccionado!,
-                      accountNumber: cuentaController.text,
-                      firstName: nombreController.text,
-                      lastName: apellidoController.text,
-                      dni: cedulaController.text,
-                    );
 
-                    await pagoService.registrarMetodoPago(metodo);
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Método de pago registrado"),
-                      ),
-                    );
-
-                    Navigator.pop(context);
-                  }
-                },
-              )
             ],
           ),
         ),

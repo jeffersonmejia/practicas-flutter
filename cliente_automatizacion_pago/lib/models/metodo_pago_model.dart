@@ -1,26 +1,34 @@
 class PaymentMethod {
-
+  String? id;
+  final String email;
+  final String names;
   final String bank;
   final String accountNumber;
-  final String firstName;
-  final String lastName;
-  final String dni;
 
   PaymentMethod({
+    this.id,
+    required this.email,
+    required this.names,
     required this.bank,
     required this.accountNumber,
-    required this.firstName,
-    required this.lastName,
-    required this.dni,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      "email": email,
+      "names": names,
       "bank": bank,
       "accountNumber": accountNumber,
-      "firstName": firstName,
-      "lastName": lastName,
-      "dni": dni,
     };
+  }
+
+  factory PaymentMethod.fromJson(Map<String, dynamic> json, [String? id]) {
+    return PaymentMethod(
+      id: id,
+      email: json['email'] ?? '',
+      names: json['names'] ?? '',
+      bank: json['bank'] ?? '',
+      accountNumber: json['accountNumber'] ?? '',
+    );
   }
 }

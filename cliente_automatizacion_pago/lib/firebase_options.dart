@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'pagos-automatizados-8af9b.firebasestorage.app',
     iosBundleId: 'com.example.clienteAutomatizacionPago',
   );
+
 }
