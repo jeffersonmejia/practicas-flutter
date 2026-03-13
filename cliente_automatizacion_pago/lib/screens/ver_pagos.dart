@@ -133,7 +133,6 @@ class _VerPagosPageState extends State<VerPagosPage> {
                   Row(
                     children: [
                       Expanded(
-                        flex: 3, // Mantengo actualizar amplio
                         child: ElevatedButton.icon(
                           onPressed: cargar,
                           icon: const Icon(Icons.refresh, size: 20),
@@ -142,31 +141,27 @@ class _VerPagosPageState extends State<VerPagosPage> {
                             backgroundColor: botonActualizarFondo,
                             foregroundColor: botonActualizarTexto,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                             textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                             elevation: 0,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 12), // gap uniforme
                       Expanded(
-                        flex: 2, // Mayor espacio horizontal para cerrar sesión
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                          child: OutlinedButton.icon(
-                            onPressed: cerrarSesion,
-                            icon: Icon(Icons.logout_outlined, size: 18, color: botonCerrarTexto),
-                            label: Text(
-                              "Cerrar sesión",
-                              style: TextStyle(color: botonCerrarTexto, fontWeight: FontWeight.w600),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                              side: BorderSide(color: Colors.grey.withOpacity(0.2)), // borde muy sutil
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              elevation: 0,
-                            ),
+                        child: OutlinedButton.icon(
+                          onPressed: cerrarSesion,
+                          icon: Icon(Icons.logout_outlined, size: 18, color: botonCerrarTexto),
+                          label: Text(
+                            "Cerrar sesión",
+                            style: TextStyle(color: botonCerrarTexto, fontWeight: FontWeight.w600),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            side: BorderSide(color: Colors.grey.withOpacity(0.2)),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            elevation: 0,
                           ),
                         ),
                       ),
