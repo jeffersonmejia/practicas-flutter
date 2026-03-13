@@ -53,6 +53,9 @@ class _VerPagosPageState extends State<VerPagosPage> {
   }
 
   Future<void> cargar() async {
+    setState(() {
+      cargando = true;
+    });
     try {
       final data = await Supabase.instance.client
           .from('pagos_verificados')
@@ -87,6 +90,8 @@ class _VerPagosPageState extends State<VerPagosPage> {
   @override
   Widget build(BuildContext context) {
     final Color botonTextoRojo = const Color.fromARGB(255, 110, 23, 23);
+    final Color botonActualizarFondo = const Color(0xFFBBDEFB); // azul suave
+    final Color botonActualizarTexto = const Color(0xFF0D1B2A); // azul tirando a negro
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -109,8 +114,7 @@ class _VerPagosPageState extends State<VerPagosPage> {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.grey[300],
-                    backgroundImage:
-                        user!.photoURL != null ? NetworkImage(user!.photoURL!) : null,
+                    backgroundImage: user!.photoURL != null ? NetworkImage(user!.photoURL!) : null,
                     child: user!.photoURL == null
                         ? Icon(Icons.person, size: 50, color: Colors.grey[600])
                         : null,
@@ -118,8 +122,7 @@ class _VerPagosPageState extends State<VerPagosPage> {
                   const SizedBox(height: 16),
                   Text(
                     user!.displayName ?? "Usuario",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 26),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
                   ),
                   const SizedBox(height: 6),
                   Text(
@@ -128,10 +131,7 @@ class _VerPagosPageState extends State<VerPagosPage> {
                   ),
                   const SizedBox(height: 16),
                   ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      minWidth: 0,
-                      maxWidth: 180,
-                    ),
+                    constraints: const BoxConstraints(minWidth: 0, maxWidth: 180),
                     child: ElevatedButton.icon(
                       onPressed: cerrarSesion,
                       icon: Icon(Icons.logout_outlined, size: 18, color: botonTextoRojo),
@@ -140,13 +140,12 @@ class _VerPagosPageState extends State<VerPagosPage> {
                         style: TextStyle(color: botonTextoRojo),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF9A9A), // fondo suave
+                        backgroundColor: const Color(0xFFEF9A9A),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 14),
+                        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                         elevation: 0,
                       ),
                     ),
@@ -154,6 +153,26 @@ class _VerPagosPageState extends State<VerPagosPage> {
                 ],
               ),
             ),
+          // Botón de actualizar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: cargar,
+                icon: const Icon(Icons.refresh, size: 20),
+                label: const Text("Actualizar"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: botonActualizarFondo,
+                  foregroundColor: botonActualizarTexto,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                  elevation: 0,
+                ),
+              ),
+            ),
+          ),
           Expanded(
             child: cargando
                 ? const Center(child: CircularProgressIndicator())
@@ -162,12 +181,12 @@ class _VerPagosPageState extends State<VerPagosPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.payments_outlined,
-                                size: 60, color: Colors.grey[400]),
+                            Icon(Icons.payments_outlined, size: 60, color: Colors.grey[400]),
                             const SizedBox(height: 12),
-                            const Text("Sin pagos registrados",
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.black54)),
+                            const Text(
+                              "Sin pagos registrados",
+                              style: TextStyle(fontSize: 16, color: Colors.black54),
+                            ),
                           ],
                         ),
                       )
@@ -196,23 +215,22 @@ class _VerPagosPageState extends State<VerPagosPage> {
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(Icons.account_circle,
-                                          color: Colors.grey[500]),
+                                      Icon(Icons.account_circle, color: Colors.grey[500]),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           pago.ordenante,
                                           style: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16),
+                                              fontWeight: FontWeight.w600, fontSize: 16),
                                         ),
                                       ),
                                       Text(
                                         "\$${pago.monto.toStringAsFixed(2)}",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 16,
-                                            color: Colors.green[600]),
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                          color: Colors.green[600],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -224,8 +242,7 @@ class _VerPagosPageState extends State<VerPagosPage> {
                                       style: TextStyle(color: Colors.grey[700])),
                                   const SizedBox(height: 4),
                                   Text("Fecha: ${pago.fecha}",
-                                      style: TextStyle(
-                                          color: Colors.grey[500], fontSize: 12)),
+                                      style: TextStyle(color: Colors.grey[500], fontSize: 12)),
                                 ],
                               ),
                             ),
